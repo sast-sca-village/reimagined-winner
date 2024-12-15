@@ -38,4 +38,19 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Executable-${{ matrix.platform }}
-        path: build_output/
+        path: build_output/*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build_output/*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

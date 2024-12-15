@@ -1,4 +1,4 @@
-name: Python Release
+name: Create Multi-Platform Release
 
 on:
   push:
@@ -6,20 +6,41 @@ on:
       - 'v*'
 
 jobs:
-  build:
+  release:
+    name: Build and Release Binaries
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    # Step 1: Checkout the Code
+    - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Step 2: Setup Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    - name: Install dependencies
-      run: pip install -r requirements.txt || echo "No dependencies"
+    # Step 3: Install PyInstaller
+    - name: Install PyInstaller
+      run: pip install pyinstaller
 
-    - name: Run script
-      run: python hello.py
+    # Step 4: Build Binaries
+    strategy:
+      matrix:
+        platform: [windows, macos, linux]
+    runs-on: ${{ matrix.platform }}-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build binary
+      run: pyinstaller --onefile hello.py
+
+    # Step 5: Upload binaries as artifacts
+    - name: Upload binary
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.platform }}-hello
+        path: dist/hello*

@@ -33,16 +33,6 @@ jobs:
         pyinstaller --onefile hello.py
       working-directory: .
 
-    - name: List dist directory contents
-      run: |
-        if [ "$RUNNER_OS" == "Windows" ]; then
-          powershell -Command "dir dist"
-        else
-          ls -alh dist
-        fi
-
-
-
     - name: Archive Executable
       run: |
         mkdir -p build_output

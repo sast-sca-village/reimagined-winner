@@ -35,11 +35,12 @@ jobs:
 
     - name: List dist directory contents
       run: |
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          dir dist
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          powershell -Command "dir dist"
         else
           ls -alh dist
         fi
+
 
 
     - name: Archive Executable

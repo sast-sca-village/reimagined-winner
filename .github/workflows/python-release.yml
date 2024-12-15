@@ -6,41 +6,36 @@ on:
       - 'v*'
 
 jobs:
-  release:
-    name: Build and Release Binaries
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
 
     steps:
-    # Step 1: Checkout the Code
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Step 2: Setup Python
-    - name: Set up Python
+    - name: Set Up Python Environment
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
 
-    # Step 3: Install PyInstaller
     - name: Install PyInstaller
       run: pip install pyinstaller
 
-    # Step 4: Build Binaries
-    strategy:
-      matrix:
-        platform: [windows, macos, linux]
-    runs-on: ${{ matrix.platform }}-latest
+    - name: Build Executable
+      run: |
+        pyinstaller --onefile hello.py
+      working-directory: .
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - name: Archive Executable
+      run: |
+        mkdir -p build_output
+        mv dist/hello* build_output/
 
-    - name: Build binary
-      run: pyinstaller --onefile hello.py
-
-    # Step 5: Upload binaries as artifacts
-    - name: Upload binary
+    - name: Upload Binaries
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ matrix.platform }}-hello
-        path: dist/hello*
+        name: Executable-${{ matrix.platform }}
+        path: build_output/

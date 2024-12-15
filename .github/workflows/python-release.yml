@@ -1,9 +1,5 @@
 name: Release
 
-# Add permissions block at the top level
-permissions:
-  contents: write  # This is crucial for creating releases
-
 on:
   push:
     tags:

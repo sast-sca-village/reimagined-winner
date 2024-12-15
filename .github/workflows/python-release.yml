@@ -1,5 +1,9 @@
 name: Create Multi-Platform Release
 
+permissions:
+  contents: write
+  id-token: write
+
 on:
   push:
     tags:
@@ -28,6 +32,9 @@ jobs:
       run: |
         pyinstaller --onefile hello.py
       working-directory: .
+
+    - name: List dist directory contents
+      run: ls -alh dist/
 
     - name: Archive Executable
       run: |
